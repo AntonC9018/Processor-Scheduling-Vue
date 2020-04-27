@@ -1,14 +1,14 @@
 <template>
   <div class="container">
     <div class="processor">
-      <lable>Select a processor</lable><br>
+      <label>Select a processor</label><br>
       <select v-model="processorName">
         <option value="simple">Simple</option>
       </select>
     </div>
     <form @submit.prevent="createProcess">      
       <div class="time">
-        <lable>Arrival time </lable>
+        <label>Arrival time </label>
         <input 
           v-model.number="newProcessData.arrivalTime" 
           type="number" 
@@ -16,7 +16,7 @@
           >
       </div>
       <div class="time">
-        <lable>Execution time </lable>
+        <label>Execution time </label>
         <input 
           v-model.number="newProcessData.executionTime" 
           type="number" 
@@ -44,7 +44,8 @@
 
     </table>
 
-    <button 
+    <button
+      v-if="!simulationActive" 
       @click="startSimulation"
       class="compute-btn"
       >
@@ -57,6 +58,7 @@
       v-bind:processor="processor"
       >
     </processor-simulation>
+    <hr/>
   </div>
 </template>
 
@@ -74,17 +76,17 @@ export default {
       // list of added processes
       processes: [
         {
-          id: 1,
+          id: 0,
           arrivalTime: 0,
           executionTime: 1
         },
         {
-          id: 2,
+          id: 1,
           arrivalTime: 2,
           executionTime: 4
         },
         {
-          id: 3,
+          id: 2,
           arrivalTime: 3,
           executionTime: 4
         },
@@ -93,7 +95,7 @@ export default {
       // this field contains the data that the user
       // enters for a new process
       newProcessData: {
-        id: 4,
+        id: 3,
         arrivalTime: 0,
         executionTime: 0
       },
@@ -126,7 +128,7 @@ export default {
         return null
       }
       return {
-        coming: this.processes.slice(0).sort((a, b) => a.arrivalTime < b.arrivalTime),
+        coming: this.processes.slice(0).sort((a, b) => a.arrivalTime - b.arrivalTime),
         waiting: [],
         finished: [],
         timestamp: 0
@@ -139,16 +141,25 @@ export default {
       this.processes.push(
         new Process(this.newProcessData)
       )
-      this.newProcessData.id++;
+      this.newProcessData.id = this.processes.length;
     },
     removeProcess: function(id) {
-      this.processes = 
-        this.processes
-          .filter(p => p.id != id)
+      this.processes.splice(id, 1)
+      this.processes.forEach(
+        (a, i) => a.id = i
+      )
+      this.newProcessData.id--
+      if (this.newProcessData.id == 0) {
+        this.simulationActive = false
+      }
     },
     startSimulation: function() {
       if (!this.processor) {
         alert('Select a processor!')
+        return;
+      }
+      if (!this.initialState) {
+        alert('Create processes first!')
         return;
       }
       this.simulationActive = true
