@@ -89,11 +89,15 @@ Alte framework-uri sunt mai puțin semnificative în comparație cu Vue.
 
 Încă am scris puțin cod cu Elm. Mi-a plăcut în general, în special faptul că este un limbaj de programare funcțional, dar sunt 2 lucruri acolo pe care eu nu am putut să le suportez:
 1. Parsing de JSON este manual și e prea verboz.
-2. Există funcția de acces la un field (Accessor), dar nu există funcția de setare a unui field (Setter/Updater). Nu văd în ce mod acesta violează politica lui Elm, dar dezvoltatorii nu vor adăuga aceasta (am citit o discuție la asta, nu o mai pot găsi acum). Această funcție ar elimina 90% de template cod repetetiv în unele proiecte. Serios, la mine un file a conținut același 10 linii de cod, dar pur și simplu cu alte numele ale variabelor, repetat de 30 de ori. Mai multă informație despre accessor-ul [aici](https://elm-lang.org/docs/records). Primul meu elm proiect [aici](https://github.com/AntonC9018/Elm-schedule).
+2. Există funcția de acces la un field (Accessor), dar nu există funcția de setare a unui field (Setter/Updater). Nu văd în ce mod acesta violează politica lui Elm, dar dezvoltatorii nu vor adăuga aceasta (am citit o discuție la asta, nu o mai pot găsi acum). Această funcție ar elimina 90% de template cod repetetiv în unele proiecte. Serios, la mine un file a conținut aceiași 10 linii de cod, dar pur și simplu cu alte numele ale variabelor, repetat de 30 de ori. Mai multă informație despre accessor-ul [aici](https://elm-lang.org/docs/records). Primul meu elm proiect [aici](https://github.com/AntonC9018/Elm-schedule).
 
-Cam așa ceva 
 ```elm
-  Linear ->
+  -- acestea sunt membrii unui enum
+  -- deci pentru fiecare proprietate a configului trebuie să am un
+  -- element specific în enumul acesta și să-i dirijez aparte
+  -- se primește cam așa ceva:
+
+  Linear -> 
       let
           newConfig =
               { oldConfig | linear = not oldConfig.linear }
@@ -121,4 +125,5 @@ Cam așa ceva
       in
       Loaded { sketch | config = newConfig }
 
+  -- etc.
 ```
