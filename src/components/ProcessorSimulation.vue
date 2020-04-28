@@ -12,7 +12,7 @@
       :disabled="true"
       v-bind:value="value"
       :min="0"
-      v-bind:max="nextState.timestamp - state.timestamp"
+      v-bind:max="nextProcessorState.timestamp - state.timestamp"
     >
     </vue-slider> -->
     <div class="play">      
@@ -106,12 +106,13 @@ export default {
       return 0;
     },
     states: function () {
+      console.log('Recalculating states')
       return this.processor.computeStates(
         this.initialState
       )
     },
     totalTime: function() {
-      return this.lastState.timestamp
+      return this.lastProcessorState.timestamp
     },
     activeProcess: function() {
       return this.states.actives[this.index]
@@ -127,16 +128,18 @@ export default {
         active: a
       }
     },
-    nextState: function() {
-      return this.states.processorStates[
-        this.index < this.states.processorStates.length - 1
+    nextIndex: function() {
+        return this.index < this.states.processorStates.length - 1
         ? this.index + 1
-        : this.index]
+        : this.index
+    },
+    nextProcessorState: function() {
+      return this.states.processorStates[this.nextIndex]
     },
     nextTimestamp: function() {
-      return this.nextState.timestamp
+      return this.nextProcessorState.timestamp
     },
-    lastState: function() {
+    lastProcessorState: function() {
       return this.states.processorStates[this.states.processorStates.length - 1]
     },
     psData: function() {
@@ -155,8 +158,14 @@ export default {
         }
       ]
     },
-    activeProcessNextStep: function() {
-      return this.nextState.waiting.filter(
+    nextActive: function() {
+      return this.states.actives[this.nextIndex]
+    },
+    activeProcessNextStep : function() {
+      if (this.nextActive && (this.nextActive.id == this.state.active.id)) {
+        return this.nextActive
+      } 
+      return this.nextProcessorState.waiting.filter(
         p => p.id == this.activeProcess.id
       )[0]
     },

@@ -1,5 +1,6 @@
 
 export class Process {
+  id;
   arrivalTime;
   executionTime;
   remainedTime;
@@ -60,7 +61,7 @@ export class Processor {
       
 
       // if no processes to process currently
-      if (queuedPs.length == 0 && comingPs[0].arrivalTime > timestamp) {
+      if (queuedPs.length == 0 && !takenP && comingPs[0].arrivalTime > timestamp) {
         // wait until the first processes arrives
         processorStates.push({
           coming: comingPs,
@@ -70,7 +71,6 @@ export class Processor {
         })
         actives.push(null)
         timestamp = comingPs[0].arrivalTime
-
       }
 
       // let some processes in
@@ -79,8 +79,9 @@ export class Processor {
       // update lists
       queuedPs = queuedPs.concat(updatedPs.enteredPs)
       comingPs = updatedPs.comingPs      
+      queuedPs = this.updateQueueEnter(queuedPs, takenP)
       takenP = this.select(queuedPs, timestamp)
-      queuedPs = this.updateQueue(queuedPs, takenP)
+      queuedPs = this.updateQueueLeave(queuedPs, takenP)
       actives.push(takenP)
 
       // save states of objects
@@ -99,6 +100,7 @@ export class Processor {
       if (takenP.remainedTime == 0) {
         // the process has finished
         finishedPs = finishedPs.concat(takenP)
+        takenP = null
       }
 
     }
@@ -127,7 +129,14 @@ export class Processor {
     return newTimestamp
   }
 
-  updateQueue(queuedPs, takenP) {
+  updateQueueEnter(queuedPs, takenP) {
+    if (takenP && takenP.remainedTime !== 0) {
+      return [...queuedPs, takenP]
+    }
+    return queuedPs.slice(0)
+  }
+
+  updateQueueLeave(queuedPs, takenP) {
     return takenP ? queuedPs.slice(1) : queuedPs.slice(0)
   }
 
@@ -157,8 +166,4 @@ export class Processor {
     return arrivals;
   }
 
-}
-
-export var processors = {
-  simple: Processor
 }

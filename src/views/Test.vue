@@ -2,8 +2,12 @@
   <div class="container">
     <div class="processor">
       <label>Select a processor</label><br>
-      <select v-model="processorName">
-        <option value="simple">Simple</option>
+      <select v-model="processorIndex">
+        <option 
+          v-for="(p, i) in processorsData" 
+          :key="i"
+          :value="i"
+        >{{ p[0] }}</option>
       </select>
     </div>
     <form @submit.prevent="createProcess">      
@@ -65,14 +69,15 @@
 
 <script>
 import ProcessorSimulation from '../components/ProcessorSimulation'
-import { processors, Process } from '../scripts/algo.js'
+import { Process } from '../scripts/algo.js'
+import processorsData from '../scripts/processors'
 
 export default {
   data () {
     return {
       // linked to selection
-      processorName: 'simple',
-
+      processorIndex: 0,
+      processorsData,
       // list of added processes
       processes: [
         {
@@ -112,8 +117,8 @@ export default {
     // instantiate the selected processor
     // see algo.js
     processor: function() {
-      if (processors[this.processorName]) {
-        return new processors[this.processorName]()
+      if (this.processors[this.processorIndex]) {
+        return new this.processors[this.processorIndex]()
       }
       return null
     },
@@ -133,6 +138,17 @@ export default {
         finished: [],
         timestamp: 0
       }
+    },
+
+    processors: function() {
+      // let t = {}
+      // for (let [name, p] of this.processorsData) {
+      //   t[name] = p
+      // }
+      // return t
+      return this.processorsData.map(
+        a => a[1]
+      )
     }
   },
   methods: {
