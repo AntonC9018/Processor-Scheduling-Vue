@@ -65,7 +65,7 @@
         <div>{{ pData.title }}</div>
         <div
           v-for="p in pData.ps"
-          v-bind:key="p.id"
+          v-bind:key="'p' + p.id"
           class="process"
         >
         <process-info
@@ -83,7 +83,7 @@ import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/antd.css'
 import Cog from './Cog'
 import ProcessInfo from './ProcessInfo'
-import { Process } from '../scripts/algo.js'
+import { Process } from '@/scripts/algo.js'
 
 export default {
   props: ['initial-state', 'processor'],

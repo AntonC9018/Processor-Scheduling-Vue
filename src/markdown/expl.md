@@ -13,6 +13,8 @@ Imagini am luat de pe aici:
 
 Favicon-ul am desenat singur în 2 minute pentru [un alt proiect al meu](https://antonc9018.github.io/Dungeon-Hopper-Docs/) asupra căruia lucrez curent. Este o joacă open-source și documentarea pentru ea.
 
+Acest document este în [markdown](https://www.wikiwand.com/en/Markdown). Am utilizat [vue-markdown](https://www.npmjs.com/package/vue-markdown) pentru procesarea markdown-ului în Vue.
+
 ## Stuctura
 Proiectul este constituit din 3 pagini:
 
@@ -39,9 +41,31 @@ Variabila de timp este direct legată cu sliderul, deci poate fi schimbată ușo
 
 De fapt, `algo.js` definește class-ul `Processor`, care poate fi `extended`. El are niște metode customizabile de către subclass-uri. Am definit niște algoritme de planificare: Round-Robin, SJF, SRTF și FIFS (default behaviour al class-ului `Processor`).
 
-> Gândurile la înbunătățire. La moment, stările procesurilor nu sunt interpolate ideal. Problema de fapt este în ceea că nu se poate schimba timpul cu cantitățile neîntrege. Încă un lucru, nu știu cum să leg informația despre un proces anume cu un element html, ca să continuu animații chiar dacă el își schimbă poziția între liste (active -> finished). Sper că starea curentă este de ajuns bună.
+## Prezentarea
 
-## Comparația de framework-uri
+Componentul ce unifică tot ce e legat de animații și interacțiunile cu userul în procesul selectării al algoritmului de planificare și al listei de procese este numit `Test.vue`. Iată interfața lui. ![Test image](./test.png) 
+
+Se poate:
+1. Selecta algoritmul planificatorului al procesorul
+2. Adăuga procese noi
+3. Privi procesele adăugate și le elimina
+4. A porni calcularea. Acest pas unește toata informația și o transmite la `ProcessSimulation.vue` care este inclus în template-ul lui `Test.vue`.
+
+Mai departe merge `ProcessSimulation.vue` cu așa interfață. ![Simulation](./simulation.png)
+
+Sliderul, cum a fost mențional anterior, controlează variabila timpului, unde sliderul în partea stânga reprezintă începutul simulației, iar în partea dreapta — terminarea ei. 
+
+Butonul se folosește pentru a porni/opri simulația automat. Aceasta se lucrează prin `setInterval` și `clearInterval`, unde fiecare secundă se incrementează variabila de timp. Animațiile și schimbările procesorilor între liste se fac automat de către CSS și Vue respectiv.
+
+Roata dențată se învârtește când un proces este activ. Acest proces este la dreapta de roata dențată.
+
+Listele de procesori pur și simplu dau toata informația despre procesori. 
+
+## Îmbunătățirea
+
+Gândurile la înbunătățire. La moment, stările procesurilor nu sunt interpolate ideal. Problema de fapt este în ceea că nu se poate schimba timpul cu cantitățile neîntrege. Încă un lucru, nu știu cum să leg informația despre un proces anume cu un element html, ca să continuu animații chiar dacă el își schimbă poziția între liste (active -> finished).
+
+## Comparația între framework-uri
 
 Documentarea oficială a lui Vue.js are [un articol la această temă](https://vuejs.org/v2/guide/comparison.html)
 

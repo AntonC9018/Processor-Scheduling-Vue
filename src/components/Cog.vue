@@ -1,7 +1,7 @@
 <template>
   <div>
   <img 
-    src="../assets/settings.png"
+    src="@/assets/settings.png"
     v-bind:style="rotate"
   >
   </div>

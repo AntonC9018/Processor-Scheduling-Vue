@@ -84,9 +84,9 @@
 
 
 <script>
-import ProcessorSimulation from '../components/ProcessorSimulation'
-import { Process } from '../scripts/algo.js'
-import processorsData from '../scripts/processors'
+import ProcessorSimulation from '@/components/ProcessorSimulation'
+import { Process } from '@/scripts/algo.js'
+import processorsData from '@/scripts/processors'
 
 export default {
   data () {

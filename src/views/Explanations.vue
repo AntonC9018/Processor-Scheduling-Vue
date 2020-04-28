@@ -12,7 +12,7 @@ import VueMarkdown from 'vue-markdown'
 export default {
   data () {
     return {
-      text: require("../markdown/expl.md").default
+      text: require("@/markdown/expl.md").default
     }
   },
   components: {
