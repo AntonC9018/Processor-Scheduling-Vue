@@ -21,9 +21,18 @@ export class Process {
 //   timestamp;
 // }
 
+// Processor base class
+// By default, a non-preemptive FCFS
+// aka First-Come-First-Served
 export class Processor {
 
-  test = "test";
+  params = []
+
+  constructor() {
+    for (let param of this.params) {
+      this[param.name] = param.defaultValue
+    }
+  }
 
   letPsIn(comingPs, timestamp) {
     // let new process come
@@ -56,44 +65,43 @@ export class Processor {
     let actives         = [null]
     let takenP
 
+    function pushState() {
+      processorStates.push({
+        coming: comingPs,
+        waiting: queuedPs,
+        finished: finishedPs,
+        timestamp: timestamp
+      })
+    }
+
     // for now, assume they come in sorted
-    while (finishedPs.length !== processCount) {
-      
+    while (finishedPs.length !== processCount) {      
 
       // if no processes to process currently
       if (queuedPs.length == 0 && !takenP && comingPs[0].arrivalTime > timestamp) {
         // wait until the first processes arrives
-        processorStates.push({
-          coming: comingPs,
-          waiting: queuedPs,
-          finished: finishedPs,
-          timestamp: timestamp
-        })
+        pushState()
         actives.push(null)
         timestamp = comingPs[0].arrivalTime
       }
 
       // let some processes in
       let updatedPs = this.letPsIn(comingPs, timestamp)
-      
-      // update lists
       queuedPs = queuedPs.concat(updatedPs.enteredPs)
-      comingPs = updatedPs.comingPs      
+      comingPs = updatedPs.comingPs 
+      
+      // put back the previous process
       queuedPs = this.updateQueueEnter(queuedPs, takenP)
+      // select a new process
       takenP = this.select(queuedPs, timestamp)
+      // remove process from list + shuffle it if needed
       queuedPs = this.updateQueueLeave(queuedPs, takenP)
+
+      // from now until the next state using this process
+      pushState()     
       actives.push(takenP)
-
-      // save states of objects
-      processorStates.push(
-        {
-          waiting: queuedPs,
-          coming: comingPs,
-          finished: finishedPs,
-          timestamp
-        }
-      )      
-
+      
+      // work on the process
       takenP = Object.assign({}, takenP)
       timestamp = this.work(takenP, timestamp)
 
@@ -104,15 +112,11 @@ export class Processor {
       }
 
     }
-    processorStates.push(
-      {
-        waiting: queuedPs,
-        coming: comingPs,
-        finished: finishedPs,
-        timestamp
-      }
-    )
+    // save the final state
+    pushState()
     actives.push(null)
+
+    // Could have debugged it further, but I'm kind of sick of it already
     return {
       processorStates,
       actives

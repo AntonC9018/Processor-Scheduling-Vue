@@ -1,11 +1,14 @@
 <template>
   <div>
+    <!-- The simulation progress slider -->
     <vue-slider
-      v-model="timeValue"
+      v-model="time"
       v-bind:min="0"
       v-bind:max="totalTime"
     >
     </vue-slider>
+
+    <!-- Thought to make a slider that shows the current time into the state, but oh well -->
     <!-- <vue-slider
       :drag-on-click="false"
       :clickable="false"
@@ -15,6 +18,8 @@
       v-bind:max="nextProcessorState.timestamp - state.timestamp"
     >
     </vue-slider> -->
+
+    <!-- The play/pause button -->
     <div class="play">      
       <div
         v-if="playing" 
@@ -27,6 +32,8 @@
         @click="play"
       ></div>
     </div>
+
+    <!-- The rotating cog and the process taken by the processor highlighted -->
     <div class="working">
       <cog
         v-bind:time="time - this.stallTime"
@@ -47,6 +54,7 @@
       </div>
     </div>
 
+    <!-- All processes sorted by categories -->
     <div class="tables-title">Tables</div>
     <div class="tables">
       <div 
@@ -74,7 +82,6 @@
 import VueSlider from 'vue-slider-component'
 import 'vue-slider-component/theme/antd.css'
 import Cog from './Cog'
-// import BarSlider from './BarSlider'
 import ProcessInfo from './ProcessInfo'
 import { Process } from '../scripts/algo.js'
 
@@ -82,17 +89,9 @@ export default {
   props: ['initial-state', 'processor'],
   data () {
     return {
-      timeValue: 0,
       time: 0,
-      value: 0,
       timerSpeed: 1000,
       playing: false
-    }
-  },
-  watch: {
-    timeValue: function() {
-      this.time = this.timeValue
-      this.value = this.nextTimestamp - this.time
     }
   },
   computed: {
@@ -106,7 +105,6 @@ export default {
       return 0;
     },
     states: function () {
-      console.log('Recalculating states')
       return this.processor.computeStates(
         this.initialState
       )
@@ -162,13 +160,20 @@ export default {
       return this.states.actives[this.nextIndex]
     },
     activeProcessNextStep : function() {
+      // If the next proccess active is the also the currently active process
       if (this.nextActive && (this.nextActive.id == this.state.active.id)) {
         return this.nextActive
       } 
+      // otherwise, the process is either waiting in the queue, or finished
       return this.nextProcessorState.waiting.filter(
         p => p.id == this.activeProcess.id
       )[0]
+      || this.nextProcessorState.finished.filter(
+        p => p.id == this.activeProcess.id
+      )[0]
     },
+
+    // Change the process's remained time smoothly 
     activeProcessInterpolated: function() {
       if (this.activeProcess == null) {
         return null;
@@ -178,11 +183,12 @@ export default {
         arrivalTime: this.activeProcess.arrivalTime,
         executionTime: this.activeProcess.executionTime
       })
-      p.remainedTime = 
-        (this.activeProcessNextStep ? this.activeProcessNextStep.remainedTime : 0) 
+      p.remainedTime = this.activeProcessNextStep.remainedTime
         + this.nextTimestamp - this.time
       return p
     },
+
+    // The amount of time that the process didn't do anything
     stallTime: function() {
       let a = 0
       for (let i = 1; i < this.index; i++) {
@@ -201,6 +207,7 @@ export default {
     }
   }, 
   methods: {
+    // Playing out the simulation
     toggle: function(playing) {
       this.playing = playing
     },

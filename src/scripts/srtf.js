@@ -1,11 +1,15 @@
-import { Processor } from './algo'
+import SJF from './sjf'
 
-export default class RoundRobin extends Processor {
+// Shortest remaining time
+// Preemtive version of SJF
+export default class SRTF extends SJF {
+  
   params = [
     { name: 'quantum', defaultValue: 2 }
   ]
 
-  // just work on the process less time
+
+  // same logic as Round Robin + SJF
   work(takenP, timestamp) {
     let timePassed = takenP.remainedTime >= this.quantum 
       ? this.quantum : takenP.remainedTime

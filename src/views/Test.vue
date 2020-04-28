@@ -1,14 +1,30 @@
 <template>
   <div class="container">
     <div class="processor">
-      <label>Select a processor</label><br>
-      <select v-model="processorIndex">
-        <option 
-          v-for="(p, i) in processorsData" 
-          :key="i"
-          :value="i"
-        >{{ p[0] }}</option>
-      </select>
+      <div>
+        <label>Select a processor</label><br>
+        <select v-model="processorIndex">
+          <option 
+            v-for="(p, i) in processorsData" 
+            :key="p[0]"
+            :value="i"
+          >{{ p[0] }}</option>
+        </select>
+      </div>
+      <div v-if="processor && processor.params.length !== 0">
+        <div
+          v-for="param in processor.params"
+          :key="param.name"
+          class="param"
+        >
+          <label>{{ param.name }}</label><br>
+          <input      
+            v-model.number="processor[param.name]"
+            type="number"
+            min="1"
+          >
+        </div>
+      </div>
     </div>
     <form @submit.prevent="createProcess">      
       <div class="time">
@@ -78,6 +94,7 @@ export default {
       // linked to selection
       processorIndex: 0,
       processorsData,
+      processors: processorsData.map(a => new a[1]),
       // list of added processes
       processes: [
         {
@@ -118,7 +135,7 @@ export default {
     // see algo.js
     processor: function() {
       if (this.processors[this.processorIndex]) {
-        return new this.processors[this.processorIndex]()
+        return this.processors[this.processorIndex]
       }
       return null
     },
@@ -133,6 +150,7 @@ export default {
         return null
       }
       return {
+        // sort processes according to the timestamp they arrive
         coming: this.processes.slice(0).sort((a, b) => a.arrivalTime - b.arrivalTime),
         waiting: [],
         finished: [],
@@ -140,16 +158,7 @@ export default {
       }
     },
 
-    processors: function() {
-      // let t = {}
-      // for (let [name, p] of this.processorsData) {
-      //   t[name] = p
-      // }
-      // return t
-      return this.processorsData.map(
-        a => a[1]
-      )
-    }
+    
   },
   methods: {
     // turn process data into process object
@@ -159,16 +168,22 @@ export default {
       )
       this.newProcessData.id = this.processes.length;
     },
+
     removeProcess: function(id) {
+
+      // remove the process at that index (id == index)
       this.processes.splice(id, 1)
-      this.processes.forEach(
-        (a, i) => a.id = i
-      )
+
+      // make all ids match the index
+      this.processes.forEach((a, i) => a.id = i)
       this.newProcessData.id--
+
+      // stop the simulation if there are no processes
       if (this.newProcessData.id == 0) {
         this.simulationActive = false
       }
     },
+
     startSimulation: function() {
       if (!this.processor) {
         alert('Select a processor!')
@@ -207,11 +222,17 @@ export default {
 }
 
 .processor {
-  text-align: center;
+  /* text-align: center; */
+  display: flex;
+  justify-content: space-evenly;
   width: calc(100% - 20px);
   background-color: rgb(255, 227, 166);
   padding: 10px;
   height: calc(60px - 20px);
+}
+
+.param {
+  text-align: center;
 }
 
 form {
@@ -231,7 +252,6 @@ form > * {
 
 .time {
   max-width: 200px;
-  /* flex: 20%; */
 }
 
 input[type="number"] {
