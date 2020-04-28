@@ -2,7 +2,7 @@
   <div class="container">
     <div class="processor">
       <div>
-        <label>Select a processor</label><br>
+        <label>Select an algorithm</label><br>
         <select v-model="processorIndex">
           <option 
             v-for="(p, i) in processorsData" 
