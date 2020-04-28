@@ -212,13 +212,13 @@ export default {
       this.playing = playing
     },
     play: function() {
-      if (this.timeValue == this.totalTime) {
-        this.timeValue = 0
+      if (this.time == this.totalTime) {
+        this.time = 0
         return;
       }
       this.toggle(true)
       let incrementTime = 
-        () => this.timeValue < this.totalTime ? this.timeValue += 1 : this.pause()
+        () => this.time < this.totalTime ? this.time += 1 : this.pause()
       this.timer = setInterval(incrementTime, this.timerSpeed)
       incrementTime();
     },
