@@ -163,6 +163,11 @@ export default {
   methods: {
     // turn process data into process object
     createProcess: function() {
+      if (typeof this.newProcessData.arrivalTime == 'string'
+        || typeof this.newProcessData.executionTime == 'string') {
+        alert('Please enter valid numbers')
+        return;
+      }
       this.processes.push(
         new Process(this.newProcessData)
       )
@@ -192,6 +197,12 @@ export default {
       if (!this.initialState) {
         alert('Create processes first!')
         return;
+      }
+      for (let param of this.processor.params) {
+        if (!this.processor[param.name] || typeof this.processor[param.name] == 'string') {
+          alert("Please enter a valid number for the variable " + param.name)
+          return;
+        }
       }
       this.simulationActive = true
     }

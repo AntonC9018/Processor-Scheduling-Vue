@@ -22,7 +22,7 @@ Acest document este în [markdown](https://www.wikiwand.com/en/Markdown). Am uti
 Proiectul este constituit din 3 pagini:
 
 1. `Home`. Este pagina de start care explică ce este asta în general;
-2. `Simulation`. Pagina unde are loc lucrurile interesante, de fapt esența proiectului.
+2. `Simulation`. Pagina unde au loc lucrurile interesante, de fapt esența proiectului.
 3. `Explanations`. Pagina dată cu explicațiile.
 
 Fiecare pagina are un component aparte și ele sunt legate între sine cu un [router](https://router.vuejs.org/).
